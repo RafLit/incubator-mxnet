@@ -299,7 +299,6 @@ static void TransposeComputeExCPU(const nnvm::NodeAttrs& attrs,
       "Transpose only supports kNullOp, kWriteTo and kAddTo";
   CHECK_EQ(inputs.size(), 1U);
   CHECK_EQ(outputs.size(), 1U);
-
   if (SupportMKLDNNTranspose(param, inputs[0]) && req[0] == kWriteTo) {
     MKLDNNRun(MKLDNNTransposeForward, attrs, ctx, inputs[0], req[0], outputs[0]);
     return;
@@ -319,6 +318,7 @@ inline static bool TransposeStorageType(const nnvm::NodeAttrs& attrs,
 #endif
 
 NNVM_REGISTER_OP(transpose)
+.add_alias("_npi_transpose")
 .describe(R"code(Permutes the dimensions of an array.
 Examples::
 

@@ -41,19 +41,7 @@
 namespace mxnet {
 namespace op {
 
-struct NumpyTransposeParam : public dmlc::Parameter<NumpyTransposeParam> {
-  mxnet::TShape axes;
-  DMLC_DECLARE_PARAMETER(NumpyTransposeParam) {
-    DMLC_DECLARE_FIELD(axes).set_default(mxnet::TShape(-1, 0))
-    .describe("By default, reverse the dimensions, otherwise permute "
-              "the axes according to the values given.");
-  }
-  void SetAttrDict(std::unordered_map<std::string, std::string>* dict) {
-    std::ostringstream axes_s;
-    axes_s << axes;
-    (*dict)["axes"] = axes_s.str();
-  }
-};
+
 
 struct NumpyVstackParam : public dmlc::Parameter<NumpyVstackParam> {
   int num_args;
@@ -142,35 +130,7 @@ struct NumpyXReshapeParam : public dmlc::Parameter<NumpyXReshapeParam> {
   }
 };
 
-template<typename xpu>
-void NumpyTranspose(const nnvm::NodeAttrs& attrs,
-                    const OpContext& ctx,
-                    const std::vector<TBlob>& inputs,
-                    const std::vector<OpReqType>& req,
-                    const std::vector<TBlob>& outputs) {
-  if (req[0] == kNullOp) return;
-  CHECK(req[0] == kWriteTo || req[0] == kAddTo)
-      << "Transpose does not support inplace";
-  const NumpyTransposeParam& param = nnvm::get<NumpyTransposeParam>(attrs.parsed);
-  mxnet::TShape axes;
-  if (ndim_is_known(param.axes)) {
-    axes = common::CanonicalizeAxes(param.axes);
-  } else {
-    axes = mxnet::TShape(inputs[0].ndim(), -1);
-    for (int i = 0; i < axes.ndim(); ++i) {
-      axes[i] = axes.ndim() - 1 - i;
-    }
-  }
-  mshadow::Tensor<xpu, 1, dim_t> workspace =
-    GetTransposeExWorkspace<xpu>(ctx, axes);
-  if (req[0] == kAddTo) {
-    TransposeExImpl<xpu, true>(ctx.run_ctx, inputs[0], outputs[0],
-        axes, workspace);
-  } else {
-    TransposeExImpl<xpu, false>(ctx.run_ctx, inputs[0], outputs[0],
-        axes, workspace);
-  }
-}
+
 
 template<typename xpu>
 void NumpyColumnStackForward(const nnvm::NodeAttrs& attrs,

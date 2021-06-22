@@ -34,7 +34,7 @@ namespace mxnet {
 MXNET_REGISTER_API("_npi.transpose")
 .set_body([](runtime::MXNetArgs args, runtime::MXNetRetValue* ret) {
   using namespace runtime;
-  static const nnvm::Op* op = Op::Get("transpose");
+  static const nnvm::Op* op = Op::Get("_npi_transpose");
   nnvm::NodeAttrs attrs;
   op::TransposeParam param;
     if (args[1].type_code() == kNull) {
