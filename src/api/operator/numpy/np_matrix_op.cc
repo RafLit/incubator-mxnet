@@ -48,7 +48,6 @@ MXNET_REGISTER_API("_npi.transpose")
   attrs.parsed = param;
   attrs.op = op;
   SetAttrDict<op::TransposeParam>(&attrs);
-
   NDArray* inputs[] = {args[0].operator mxnet::NDArray*()};
   int num_inputs = 1;
   int num_outputs = 0;

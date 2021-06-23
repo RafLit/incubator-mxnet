@@ -299,7 +299,7 @@ static void TransposeComputeExCPU(const nnvm::NodeAttrs& attrs,
       "Transpose only supports kNullOp, kWriteTo and kAddTo";
   CHECK_EQ(inputs.size(), 1U);
   CHECK_EQ(outputs.size(), 1U);
-  
+
   if (SupportMKLDNNTranspose(param, inputs[0]) && req[0] == kWriteTo) {
     MKLDNNRun(MKLDNNTransposeForward, attrs, ctx, inputs[0], req[0], outputs[0]);
     return;
