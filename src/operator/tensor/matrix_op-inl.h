@@ -261,6 +261,11 @@ struct TransposeParam : public dmlc::Parameter<TransposeParam> {
   bool operator==(const TransposeParam &other) const {
     return this->axes == other.axes;
   }
+  void SetAttrDict(std::unordered_map<std::string, std::string>* dict) {
+    std::ostringstream axes_s;
+    axes_s << axes;
+    (*dict)["axes"] = axes_s.str();
+  }
 };
 
 
