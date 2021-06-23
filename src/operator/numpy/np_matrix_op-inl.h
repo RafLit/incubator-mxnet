@@ -41,8 +41,6 @@
 namespace mxnet {
 namespace op {
 
-
-
 struct NumpyVstackParam : public dmlc::Parameter<NumpyVstackParam> {
   int num_args;
   DMLC_DECLARE_PARAMETER(NumpyVstackParam) {
@@ -129,8 +127,6 @@ struct NumpyXReshapeParam : public dmlc::Parameter<NumpyXReshapeParam> {
     (*dict)["order"] = order_s.str();
   }
 };
-
-
 
 template<typename xpu>
 void NumpyColumnStackForward(const nnvm::NodeAttrs& attrs,

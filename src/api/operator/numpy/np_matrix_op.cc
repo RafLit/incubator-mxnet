@@ -37,7 +37,7 @@ MXNET_REGISTER_API("_npi.transpose")
   static const nnvm::Op* op = Op::Get("_npi_transpose");
   nnvm::NodeAttrs attrs;
   op::TransposeParam param;
-    if (args[1].type_code() == kNull) {
+  if (args[1].type_code() == kNull) {
     param.axes = TShape(0,0);
   } else if (args[1].type_code() == kDLInt) {
 
@@ -47,8 +47,8 @@ MXNET_REGISTER_API("_npi.transpose")
   }
   attrs.parsed = param;
   attrs.op = op;
-
   SetAttrDict<op::TransposeParam>(&attrs);
+
   NDArray* inputs[] = {args[0].operator mxnet::NDArray*()};
   int num_inputs = 1;
   int num_outputs = 0;
