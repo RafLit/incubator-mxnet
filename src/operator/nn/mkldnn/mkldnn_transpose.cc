@@ -143,7 +143,7 @@ void MKLDNNTransposeForward(const nnvm::NodeAttrs& attrs,
                             const OpReqType &req,
                             const NDArray &output) {
   const TransposeParam& param = nnvm::get<TransposeParam>(attrs.parsed);
-  
+
   auto fwd = GetTransposeForward(param, data);
   fwd.SetNewMem(data, output);
   fwd.Execute();
