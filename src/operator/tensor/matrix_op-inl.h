@@ -599,12 +599,17 @@ inline bool TransposeShape(const nnvm::NodeAttrs& attrs,
     }
   } else {
     CHECK_EQ(std::max(shp.ndim(), out_shp.ndim()), param.axes.ndim());
+    mxnet::TShape axes = common::CanonicalizeAxes(param.axes);
+    std::set<dim_t> axes_set(axes.begin(), axes.end());
+    CHECK_EQ(axes_set.size(), axes.ndim()) << "ValueError: Repeated axis in transpose."
+                                           << " param.axes = "
+                                           << param.axes;
     for (int i = 0; i < shp.ndim(); ++i) {
-      CHECK(param.axes[i] < static_cast<int64_t>(shp.ndim()));
-      ret[i] = shp[param.axes[i]];
+      CHECK(axes[i] < static_cast<int64_t>(shp.ndim()));
+      ret[i] = shp[axes[i]];
     }
     for (int i = 0; i < out_shp.ndim(); ++i) {
-      get[param.axes[i]] = out_shp[i];
+      get[axes[i]] = out_shp[i];
     }
   }
   SHAPE_ASSIGN_CHECK(*in_attrs, 0, get);
