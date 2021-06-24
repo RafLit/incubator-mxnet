@@ -63,9 +63,8 @@ class MKLDNNTransposeForward {
         axes[i] = data_ndim - i - 1;
       }
     } else {
-      axes = param.axes;
+      axes = common::CanonicalizeAxes(param.axes);
     }
-
     auto engine = CpuEngine::Get()->get_engine();
     auto in_mem = data.GetMKLDNNData();
     auto src_md = in_mem->get_desc();
