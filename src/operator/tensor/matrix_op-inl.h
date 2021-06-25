@@ -582,34 +582,34 @@ inline bool TransposeShape(const nnvm::NodeAttrs& attrs,
   const TransposeParam& param = nnvm::get<TransposeParam>(attrs.parsed);
   CHECK_EQ(in_attrs->size(), 1U);
   CHECK_EQ(out_attrs->size(), 1U);
-  mxnet::TShape& shp = (*in_attrs)[0];
-  mxnet::TShape& out_shp = (*out_attrs)[0];
-  if (!mxnet::ndim_is_known(shp) && !mxnet::ndim_is_known(out_shp))
+  mxnet::TShape& shape = (*in_attrs)[0];
+  mxnet::TShape& out_shape = (*out_attrs)[0];
+  if (!mxnet::ndim_is_known(shape) && !mxnet::ndim_is_known(out_shape))
     return false;  // none of the shapes is known
-  if (out_shp.ndim() >= 0 && shp.ndim() >= 0)
-    CHECK_EQ(out_shp.ndim(), shp.ndim());
-  mxnet::TShape get(std::max(shp.ndim(), out_shp.ndim()), -1);
-  mxnet::TShape ret(std::max(shp.ndim(), out_shp.ndim()), -1);
+  if (out_shape.ndim() >= 0 && shape.ndim() >= 0)
+    CHECK_EQ(out_shape.ndim(), shape.ndim());
+  mxnet::TShape get(std::max(shape.ndim(), out_shape.ndim()), -1);
+  mxnet::TShape ret(std::max(shape.ndim(), out_shape.ndim()), -1);
   if (param.axes.ndim() == 0) {
-    for (int i = 0; i < shp.ndim(); ++i) {
-      ret[i] = shp[shp.ndim()-1-i];
+    for (int i = 0; i < shape.ndim(); ++i) {
+      ret[i] = shape[shape.ndim()-1-i];
     }
-    for (int i = 0; i < out_shp.ndim(); ++i) {
-      get[shp.ndim()-1-i] = out_shp[i];
+    for (int i = 0; i < out_shape.ndim(); ++i) {
+      get[shape.ndim()-1-i] = out_shape[i];
     }
   } else {
-    CHECK_EQ(std::max(shp.ndim(), out_shp.ndim()), param.axes.ndim());
+    CHECK_EQ(std::max(shape.ndim(), out_shape.ndim()), param.axes.ndim());
     mxnet::TShape axes = common::CanonicalizeAxes(param.axes);
     std::set<dim_t> axes_set(axes.begin(), axes.end());
     CHECK_EQ(axes_set.size(), axes.ndim()) << "ValueError: Repeated axis in transpose."
                                            << " param.axes = "
                                            << param.axes;
-    for (int i = 0; i < shp.ndim(); ++i) {
-      CHECK(axes[i] < static_cast<int64_t>(shp.ndim()));
-      ret[i] = shp[axes[i]];
+    for (int i = 0; i < shape.ndim(); ++i) {
+      CHECK(axes[i] < static_cast<int64_t>(shape.ndim()));
+      ret[i] = shape[axes[i]];
     }
-    for (int i = 0; i < out_shp.ndim(); ++i) {
-      get[axes[i]] = out_shp[i];
+    for (int i = 0; i < out_shape.ndim(); ++i) {
+      get[axes[i]] = out_shape[i];
     }
   }
   SHAPE_ASSIGN_CHECK(*in_attrs, 0, get);
