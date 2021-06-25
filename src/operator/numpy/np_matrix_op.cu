@@ -30,7 +30,7 @@ namespace mxnet {
 namespace op {
 
 NNVM_REGISTER_OP(_npi_transpose)
-.set_attr<FCompute>("FCompute<gpu>", NumpyTranspose<gpu>);
+.set_attr<FCompute>("FCompute<gpu>", Transpose<gpu>);
 
 NNVM_REGISTER_OP(_np_reshape)
 .set_attr<FCompute>("FCompute<gpu>", UnaryOp::IdentityCompute<gpu>);
