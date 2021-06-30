@@ -39,9 +39,8 @@ class SgMKLDNNQuantizeOperator {
   explicit SgMKLDNNQuantizeOperator(const nnvm::NodeAttrs& attrs)
       : param_(nnvm::get<QuantizeV2Param>(attrs.parsed)) {}
 
-  void Forward(
-      const OpContext& ctx, const std::vector<NDArray>& inputs, const std::vector<OpReqType>& req,
-      const std::vector<NDArray>& outputs);
+  void Forward(const OpContext& ctx, const std::vector<NDArray>& inputs,
+               const std::vector<OpReqType>& req, const std::vector<NDArray>& outputs);
 
  private:
   bool initalized_{false};
@@ -53,9 +52,9 @@ class SgMKLDNNQuantizeOperator {
   std::shared_ptr<mkldnn::reorder> fwd_pd_;
 };
 
-void SgMKLDNNQuantizeOperator::Forward(
-    const OpContext& ctx, const std::vector<NDArray>& inputs, const std::vector<OpReqType>& req,
-    const std::vector<NDArray>& outputs) {
+void SgMKLDNNQuantizeOperator::Forward(const OpContext& ctx, const std::vector<NDArray>& inputs,
+                                       const std::vector<OpReqType>& req,
+                                       const std::vector<NDArray>& outputs) {
   float quantized_range = 0.0;
   NDArray in_buffer     = inputs[0];
   float data_min        = mshadow::red::limits::MaxValue<float>();
@@ -157,9 +156,10 @@ void SgMKLDNNQuantizeOperator::Forward(
   }
 }
 
-static void SgMKLDNNQuantizeForward(
-    const OpStatePtr& state_ptr, const OpContext& ctx, const std::vector<NDArray>& inputs,
-    const std::vector<OpReqType>& req, const std::vector<NDArray>& outputs) {
+static void SgMKLDNNQuantizeForward(const OpStatePtr& state_ptr, const OpContext& ctx,
+                                    const std::vector<NDArray>& inputs,
+                                    const std::vector<OpReqType>& req,
+                                    const std::vector<NDArray>& outputs) {
   SgMKLDNNQuantizeOperator& op = state_ptr.get_state<SgMKLDNNQuantizeOperator>();
   op.Forward(ctx, inputs, req, outputs);
 }
