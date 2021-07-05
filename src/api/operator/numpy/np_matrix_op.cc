@@ -36,17 +36,17 @@ MXNET_REGISTER_API("_npi.transpose")
   using namespace runtime;
   static const nnvm::Op* op = Op::Get("_npi_transpose");
   nnvm::NodeAttrs attrs;
-  op::NumpyTransposeParam param;
+  op::TransposeParam param;
   if (args[1].type_code() == kNull) {
-    param.axes = TShape(-1, 0);
+    param.axes = TShape(0, 0);
   } else if (args[1].type_code() == kDLInt) {
     param.axes = TShape(1, args[1].operator int64_t());
   } else {
-    param.axes = TShape(args[1].operator ObjectRef());
+    param.axes = common::CanonicalizeAxes(TShape((args[1].operator ObjectRef())));
   }
   attrs.parsed = param;
   attrs.op = op;
-  SetAttrDict<op::NumpyTransposeParam>(&attrs);
+  SetAttrDict<op::TransposeParam>(&attrs);
   NDArray* inputs[] = {args[0].operator mxnet::NDArray*()};
   int num_inputs = 1;
   int num_outputs = 0;
