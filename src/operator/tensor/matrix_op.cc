@@ -319,6 +319,7 @@ inline static bool TransposeStorageType(const nnvm::NodeAttrs& attrs,
 #endif
 
 NNVM_REGISTER_OP(transpose)
+.add_alias("_npi_transpose")
 .describe(R"code(Permutes the dimensions of an array.
 Examples::
 

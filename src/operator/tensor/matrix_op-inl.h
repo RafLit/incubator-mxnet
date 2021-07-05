@@ -261,6 +261,11 @@ struct TransposeParam : public dmlc::Parameter<TransposeParam> {
   bool operator==(const TransposeParam &other) const {
     return this->axes == other.axes;
   }
+  void SetAttrDict(std::unordered_map<std::string, std::string>* dict) {
+    std::ostringstream axes_s;
+    axes_s << axes;
+    (*dict)["axes"] = axes_s.str();
+  }
 };
 
 
@@ -557,7 +562,7 @@ void Transpose(const nnvm::NodeAttrs& attrs,
       axes[i] = axes.ndim() - 1 - i;
     }
   } else {
-    axes = common::CanonicalizeAxes(param.axes);
+    axes = param.axes;
   }
 
   mshadow::Tensor<xpu, 1, dim_t> workspace =
@@ -577,29 +582,37 @@ inline bool TransposeShape(const nnvm::NodeAttrs& attrs,
   const TransposeParam& param = nnvm::get<TransposeParam>(attrs.parsed);
   CHECK_EQ(in_attrs->size(), 1U);
   CHECK_EQ(out_attrs->size(), 1U);
-  mxnet::TShape& shp = (*in_attrs)[0];
-  mxnet::TShape& out_shp = (*out_attrs)[0];
-  if (!mxnet::ndim_is_known(shp) && !mxnet::ndim_is_known(out_shp))
+  mxnet::TShape& shape = (*in_attrs)[0];
+  mxnet::TShape& out_shape = (*out_attrs)[0];
+  if (!mxnet::ndim_is_known(shape) && !mxnet::ndim_is_known(out_shape))
     return false;  // none of the shapes is known
-  if (out_shp.ndim() >= 0 && shp.ndim() >= 0)
-    CHECK_EQ(out_shp.ndim(), shp.ndim());
-  mxnet::TShape get(std::max(shp.ndim(), out_shp.ndim()), -1);
-  mxnet::TShape ret(std::max(shp.ndim(), out_shp.ndim()), -1);
+  if (out_shape.ndim() >= 0 && shape.ndim() >= 0)
+    CHECK_EQ(out_shape.ndim(), shape.ndim());
+  mxnet::TShape get(std::max(shape.ndim(), out_shape.ndim()), -1);
+  mxnet::TShape ret(std::max(shape.ndim(), out_shape.ndim()), -1);
   if (param.axes.ndim() == 0) {
-    for (int i = 0; i < shp.ndim(); ++i) {
-      ret[i] = shp[shp.ndim()-1-i];
+    for (int i = 0; i < shape.ndim(); ++i) {
+      ret[i] = shape[shape.ndim()-1-i];
     }
-    for (int i = 0; i < out_shp.ndim(); ++i) {
-      get[shp.ndim()-1-i] = out_shp[i];
+    for (int i = 0; i < out_shape.ndim(); ++i) {
+      get[shape.ndim()-1-i] = out_shape[i];
     }
   } else {
-    CHECK_EQ(std::max(shp.ndim(), out_shp.ndim()), param.axes.ndim());
-    for (int i = 0; i < shp.ndim(); ++i) {
-      CHECK(param.axes[i] < static_cast<int64_t>(shp.ndim()));
-      ret[i] = shp[param.axes[i]];
+    CHECK_EQ(std::max(shape.ndim(), out_shape.ndim()), param.axes.ndim())
+      << "The number of axes does not match the dimension of the tensor.";
+    std::set<dim_t> axes_set(param.axes.begin(), param.axes.end());
+    CHECK_EQ(axes_set.size(), param.axes.ndim())
+      << "ValueError: Repeated axis in transpose."
+      << " param.axes = " << param.axes;
+    for (int i = 0; i < shape.ndim(); ++i) {
+      CHECK(0 <= param.axes[i] &&
+        param.axes[i] < static_cast<int64_t>(shape.ndim()))
+        << "axes[" << i <<"] = " << param.axes[i]
+        << " is out of bounds: [0, " << shape.ndim() << ").";
+      ret[i] = shape[param.axes[i]];
     }
-    for (int i = 0; i < out_shp.ndim(); ++i) {
-      get[param.axes[i]] = out_shp[i];
+    for (int i = 0; i < out_shape.ndim(); ++i) {
+      get[param.axes[i]] = out_shape[i];
     }
   }
   SHAPE_ASSIGN_CHECK(*in_attrs, 0, get);
