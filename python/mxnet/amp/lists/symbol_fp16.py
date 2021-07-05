@@ -296,7 +296,6 @@ FP16_FP32_FUNCS = [
     '_npi_subtract',
     '_npi_subtract_scalar',
     '_npi_tanh',
-    '_npi_transpose',
     '_npi_tri',
     '_npi_tril',
     '_npi_tril_indices',
