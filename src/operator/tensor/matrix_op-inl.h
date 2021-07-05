@@ -27,6 +27,7 @@
 
 #include <mxnet/operator_util.h>
 #include <vector>
+#include <set>
 #include <string>
 #include <algorithm>
 #include <utility>
