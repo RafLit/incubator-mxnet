@@ -199,7 +199,7 @@ class SgMKLDNNTransformerValAttSelector : public SubgraphSelectorV2 {
       case OutStatus::oStart:
         if (output_node.node->op() == Op::Get("_npi_transpose")) {
           auto const &transpose_params =
-                        nnvm::get<NumpyTransposeParam>(output_node.node->attrs.parsed);
+                        nnvm::get<TransposeParam>(output_node.node->attrs.parsed);
           auto axes = transpose_params.axes;
           if (axes.ndim() == 4 && axes[0] == 0 && axes[1] == 2 && axes[2] == 1 && axes[3] == 3) {
             out_status_ = OutStatus::oTranspose;
