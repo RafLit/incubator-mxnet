@@ -563,7 +563,7 @@ void Transpose(const nnvm::NodeAttrs& attrs,
       axes[i] = axes.ndim() - 1 - i;
     }
   } else {
-    axes = param.axes;
+    axes = common::CanonicalizeAxes(param.axes);
   }
 
   mshadow::Tensor<xpu, 1, dim_t> workspace =
@@ -601,19 +601,21 @@ inline bool TransposeShape(const nnvm::NodeAttrs& attrs,
   } else {
     CHECK_EQ(std::max(shape.ndim(), out_shape.ndim()), param.axes.ndim())
       << "The number of axes does not match the dimension of the tensor.";
-    std::set<dim_t> axes_set(param.axes.begin(), param.axes.end());
-    CHECK_EQ(axes_set.size(), param.axes.ndim())
+    mxnet::TShape axes = common::CanonicalizeAxes(param.axes);
+    std::set<dim_t> axes_set(axes.begin(), axes.end());
+    CHECK_EQ(axes_set.size(), axes.ndim())
       << "ValueError: Repeated axis in transpose."
       << " param.axes = " << param.axes;
     for (int i = 0; i < shape.ndim(); ++i) {
-      CHECK(0 <= param.axes[i] &&
-        param.axes[i] < static_cast<int64_t>(shape.ndim()))
+      CHECK(0 <= axes[i] &&
+        axes[i] < static_cast<int64_t>(shape.ndim()))
         << "axes[" << i <<"] = " << param.axes[i]
-        << " is out of bounds: [0, " << shape.ndim() << ").";
-      ret[i] = shape[param.axes[i]];
+        << " is out of bounds: [" << -shape.ndim() 
+        << ", " << shape.ndim() << ").";
+      ret[i] = shape[axes[i]];
     }
     for (int i = 0; i < out_shape.ndim(); ++i) {
-      get[param.axes[i]] = out_shape[i];
+      get[axes[i]] = out_shape[i];
     }
   }
   SHAPE_ASSIGN_CHECK(*in_attrs, 0, get);

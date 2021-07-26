@@ -353,9 +353,10 @@ Examples::
           "transpose", n, ograds, {},
           std::unordered_map<std::string, std::string>());
     } else {
+      mxnet::TShape axes_in = common::CanonicalizeAxes(param.axes);
       mxnet::TShape axes = mxnet::TShape(param.axes.ndim(), -1);
       for (int i = 0; i < axes.ndim(); ++i) {
-        axes[param.axes[i]] = i;
+        axes[axes_in[i]] = i;
       }
       std::ostringstream os;
       os << axes;
