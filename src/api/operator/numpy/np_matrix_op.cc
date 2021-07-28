@@ -42,7 +42,7 @@ MXNET_REGISTER_API("_npi.transpose")
   } else if (args[1].type_code() == kDLInt) {
     param.axes = TShape(1, args[1].operator int64_t());
   } else {
-    param.axes = TShape((args[1].operator ObjectRef()));
+    param.axes = TShape(args[1].operator ObjectRef());
   }
   attrs.parsed = param;
   attrs.op = op;
