@@ -2565,13 +2565,27 @@ def test_transpose():
             dims = list(np.random.randint(1, 5, size=ndim))
             axes = list(range(ndim))
             random.shuffle(axes)
-            axes = tuple(axes)
             x = mx.nd.array(np.random.normal(size=dims))
             y = mx.nd.transpose(x, axes=axes)
             assert_allclose(np.transpose(x.asnumpy(), axes=axes), y.asnumpy())
 
             y = mx.nd.transpose(x)
             assert_allclose(np.transpose(x.asnumpy()), y.asnumpy())
+
+            # test with randomly chosen negative axes
+            axes = [axes[i] - ndim if random.choice([True, False]) else axes[i]
+                    for i in range(ndim)]
+            y = mx.nd.transpose(x, axes=axes)
+            assert_allclose(np.transpose(x.asnumpy(), axes=axes), y.asnumpy())
+
+            # test with negative axes
+            axes = list(range(-ndim, 0))
+            random.shuffle(axes)
+            print(axes)
+            y = mx.nd.transpose(x, axes=axes)
+            assert_allclose(np.transpose(x.asnumpy(), axes=axes), y.asnumpy())
+
+
 
 
 @pytest.mark.serial
