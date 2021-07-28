@@ -339,6 +339,10 @@ Examples::
                                  [ 5.,  6.]],
                                 [[ 3.,  4.],
                                  [ 7.,  8.]]]
+  transpose(x, axes=(-2,-3,-1)) = [[[ 1.,  2.],
+                                    [ 5.,  6.]],
+                                   [[ 3.,  4.],
+                                    [ 7.,  8.]]]
 )code" ADD_FILELINE)
 .set_num_inputs(1)
 .set_num_outputs(1)
