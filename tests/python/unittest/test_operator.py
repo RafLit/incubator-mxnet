@@ -2626,6 +2626,12 @@ def test_big_transpose():
     axes = (0,2,3,4,1)
     z = mx.nd.transpose(y, axes=axes)
     assert_allclose(x_np, z.asnumpy().astype('uint8'))
+    axes = (0,-3,3,-1,-4)
+    z = mx.nd.transpose(y, axes=axes)
+    assert_allclose(x_np, z.asnumpy().astype('uint8'))
+    axes = (-5,-3,-2,-1,-4)
+    z = mx.nd.transpose(y, axes=axes)
+    assert_allclose(x_np, z.asnumpy().astype('uint8'))
 
 
 @pytest.mark.serial
