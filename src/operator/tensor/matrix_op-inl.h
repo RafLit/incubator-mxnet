@@ -607,11 +607,6 @@ inline bool TransposeShape(const nnvm::NodeAttrs& attrs,
       << "ValueError: Repeated axis in transpose."
       << " param.axes = " << param.axes;
     for (int i = 0; i < shape.ndim(); ++i) {
-      CHECK(0 <= axes[i] &&
-        axes[i] < static_cast<int64_t>(shape.ndim()))
-        << "axes[" << i <<"] = " << param.axes[i]
-        << " is out of bounds: [" << -shape.ndim() 
-        << ", " << shape.ndim() << ").";
       ret[i] = shape[axes[i]];
     }
     for (int i = 0; i < out_shape.ndim(); ++i) {
