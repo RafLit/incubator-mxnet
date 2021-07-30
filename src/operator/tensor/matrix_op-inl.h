@@ -255,7 +255,7 @@ inline bool FlattenShape(const nnvm::NodeAttrs& attrs,
 struct TransposeParam : public dmlc::Parameter<TransposeParam> {
   mxnet::TShape axes;
   DMLC_DECLARE_PARAMETER(TransposeParam) {
-    DMLC_DECLARE_FIELD(axes).set_default(mxnet::TShape(0, -1))
+    DMLC_DECLARE_FIELD(axes).set_default(mxnet::TShape(-1, 0))
     .describe("Target axis order. By default the axes will be inverted.");
   }
 
@@ -557,7 +557,7 @@ void Transpose(const nnvm::NodeAttrs& attrs,
   CHECK(req[0] == kWriteTo || req[0] == kAddTo)
        << "Transpose only supports kNullOp, kWriteTo and kAddTo";
   mxnet::TShape axes;
-  if (param.axes.ndim() == 0) {
+  if (!ndim_is_known(param.axes)) {
     axes = mxnet::TShape(inputs[0].ndim(), -1);
     for (int i = 0; i < axes.ndim(); ++i) {
       axes[i] = axes.ndim() - 1 - i;
@@ -591,7 +591,7 @@ inline bool TransposeShape(const nnvm::NodeAttrs& attrs,
     CHECK_EQ(out_shape.ndim(), shape.ndim());
   mxnet::TShape get(std::max(shape.ndim(), out_shape.ndim()), -1);
   mxnet::TShape ret(std::max(shape.ndim(), out_shape.ndim()), -1);
-  if (param.axes.ndim() == 0) {
+  if (!ndim_is_known(param.axes)) {
     for (int i = 0; i < shape.ndim(); ++i) {
       ret[i] = shape[shape.ndim()-1-i];
     }

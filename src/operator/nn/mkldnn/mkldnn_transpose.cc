@@ -58,7 +58,7 @@ class MKLDNNTransposeForward {
     auto data_ndim = shape.ndim();
     auto axes_ndim = param.axes.ndim();
     auto axes = mxnet::TShape(data_ndim, -1);
-    if (axes_ndim == 0) {
+    if (axes_ndim == -1) {
       for (int i = 0; i < data_ndim; i++) {
         axes[i] = data_ndim - i - 1;
       }
