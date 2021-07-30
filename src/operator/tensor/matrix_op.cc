@@ -343,7 +343,6 @@ Examples::
                                     [ 5.,  7.]],
                                    [[ 2.,  4.],
                                     [ 6.,  8.]]]
-                        
 )code" ADD_FILELINE)
 .set_num_inputs(1)
 .set_num_outputs(1)
