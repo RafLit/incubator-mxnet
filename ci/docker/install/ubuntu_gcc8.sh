@@ -17,6 +17,6 @@
 # specific language governing permissions and limitations
 # under the License.
 
-sudo add-apt-repository ppa:jonathonf/gcc
-sudo apt-get update || true
-sudo apt-get install -y gcc-8 g++-8
+sudo -E add-apt-repository ppa:jonathonf/gcc
+sudo -E apt-get update || true
+sudo -E apt-get install -y gcc-8 g++-8

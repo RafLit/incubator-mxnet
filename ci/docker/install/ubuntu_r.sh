@@ -29,7 +29,7 @@ cd "$(dirname "$0")"
 # install libraries for mxnet's r package on ubuntu
 echo "deb http://cran.rstudio.com/bin/linux/ubuntu bionic-cran40/" >> /etc/apt/sources.list
 
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+apt-key adv --keyserver-options http-proxy=http://proxy-mu.intel.com:911/ --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 
 add-apt-repository ppa:cran/libgit2
 

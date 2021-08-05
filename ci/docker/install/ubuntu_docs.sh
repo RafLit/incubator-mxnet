@@ -29,7 +29,7 @@ apt-get install -y \
     pandoc
 
 # Can probably delete these and docs_requirements
-wget -q https://repo.anaconda.com/miniconda/Miniconda2-latest-Linux-x86_64.sh
+wget -e use_proxy=yes -e https_proxy=proxy-mu.intel.com:912 -q https://repo.anaconda.com/miniconda/Miniconda2-latest-Linux-x86_64.sh
 chmod +x Miniconda2-latest-Linux-x86_64.sh
 ./Miniconda2-latest-Linux-x86_64.sh -b -p /work/miniconda
 

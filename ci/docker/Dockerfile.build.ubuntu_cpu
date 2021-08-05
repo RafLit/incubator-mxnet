@@ -19,11 +19,18 @@
 # Dockerfile to build and run MXNet on Ubuntu 18.04 for CPU
 
 FROM ubuntu:18.04
+ENV no_proxy 127.0.0.1,localhost
+ENV http_proxy http://proxy-mu.intel.com:911
+ENV https_proxy http://proxy-mu.intel.com:912
 
 WORKDIR /work/deps
 
 COPY install/ubuntu_core.sh /work/
 RUN /work/ubuntu_core.sh
+
+COPY install/ubuntu_gcc8.sh /work/
+RUN /work/ubuntu_gcc8.sh
+
 
 COPY install/deb_ubuntu_ccache.sh /work/
 RUN /work/deb_ubuntu_ccache.sh
@@ -36,8 +43,8 @@ COPY install/ubuntu_scala.sh /work/
 COPY install/sbt.gpg /work/
 RUN /work/ubuntu_scala.sh
 
-COPY install/ubuntu_clojure.sh /work/
-RUN /work/ubuntu_clojure.sh
+#COPY install/ubuntu_clojure.sh /work/
+#RUN /work/ubuntu_clojure.sh
 
 COPY install/ubuntu_r.sh /work/
 RUN /work/ubuntu_r.sh
@@ -50,9 +57,6 @@ RUN /work/ubuntu_julia.sh
 
 COPY install/ubuntu_clang.sh /work/
 RUN /work/ubuntu_clang.sh
-
-COPY install/ubuntu_gcc8.sh /work/
-RUN /work/ubuntu_gcc8.sh
 
 COPY install/ubuntu_mkl.sh /work/
 RUN /work/ubuntu_mkl.sh

@@ -24,7 +24,7 @@ set -ex
 
 apt-get update || true
 # Install clang 3.9 (the same version as in XCode 8.*) and 6.0 (latest major release)
-wget -qO - http://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
+wget -e use_proxy=yes -e https_proxy=proxy-mu.intel.com:912 -qO - http://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     apt-add-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-6.0 main" && \
     apt-get update && \
     apt-get install -y clang-6.0 clang-tidy-6.0 && \
@@ -33,6 +33,6 @@ wget -qO - http://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
 # Use llvm's master version of run-clang-tidy.py.  This version has mostly minor updates, but
 # importantly will properly return a non-zero exit code when an error is reported in clang-tidy.
 # Please remove the below if we install a clang version higher than 6.0.
-wget \
+wget -e use_proxy=yes -e https_proxy=proxy-mu.intel.com:912 \
  -qO /usr/lib/llvm-6.0/share/clang/run-clang-tidy.py\
  https://raw.githubusercontent.com/llvm-mirror/clang-tools-extra/7654135f0cbd155c285fd2a37d87e27e4fff3071/clang-tidy/tool/run-clang-tidy.py
