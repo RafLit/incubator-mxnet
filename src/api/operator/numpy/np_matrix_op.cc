@@ -35,6 +35,7 @@ MXNET_REGISTER_API("_npi.transpose")
 .set_body([](runtime::MXNetArgs args, runtime::MXNetRetValue* ret) {
   using namespace runtime;
   static const nnvm::Op* op = Op::Get("_npi_transpose");
+  NDArray* inputs[] = {args[0].operator mxnet::NDArray*()};
   nnvm::NodeAttrs attrs;
   op::TransposeParam param;
   if (args[1].type_code() == kNull) {
@@ -43,11 +44,15 @@ MXNET_REGISTER_API("_npi.transpose")
     param.axes = TShape(1, args[1].operator int64_t());
   } else {
     param.axes = TShape(args[1].operator ObjectRef());
+    if (param.axes.ndim() == 0)
+    {
+      CHECK(inputs[0]->shape().ndim() == 0) << 
+        "The number of axes does not match the dimension of the tensor.";
+    }
   }
   attrs.parsed = param;
   attrs.op = op;
   SetAttrDict<op::TransposeParam>(&attrs);
-  NDArray* inputs[] = {args[0].operator mxnet::NDArray*()};
   int num_inputs = 1;
   int num_outputs = 0;
   auto ndoutputs = Invoke(op, &attrs, num_inputs, inputs, &num_outputs, nullptr);
