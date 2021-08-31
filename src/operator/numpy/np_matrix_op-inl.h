@@ -48,6 +48,11 @@ struct NumpyTransposeParam : public dmlc::Parameter<NumpyTransposeParam> {
     .describe("By default, reverse the dimensions, otherwise permute "
               "the axes according to the values given.");
   }
+
+  bool operator==(const NumpyTransposeParam &other) const {
+    return this->axes == other.axes;
+  }
+
   void SetAttrDict(std::unordered_map<std::string, std::string>* dict) {
     std::ostringstream axes_s;
     axes_s << axes;
@@ -1845,7 +1850,20 @@ void NumpyDiagIndicesFromForward(const nnvm::NodeAttrs& attrs,
   });
 }
 
+
+
 }  // namespace op
 }  // namespace mxnet
+
+namespace std {
+template<>
+struct hash<mxnet::op::NumpyTransposeParam> {
+  size_t operator()(const mxnet::op::NumpyTransposeParam& val) {
+    size_t ret = 0;
+    ret = dmlc::HashCombine(ret, val.axes);
+    return ret;
+  }
+};
+}  // namespace std
 
 #endif  // MXNET_OPERATOR_NUMPY_NP_MATRIX_OP_INL_H_
