@@ -115,6 +115,8 @@ static void ReshapeComputeExCPU(const nnvm::NodeAttrs& attrs,
                                 const std::vector<NDArray>& outputs) {
   CHECK_EQ(inputs.size(), 1U);
   CHECK_EQ(outputs.size(), 1U);
+  CHECK(inputs[0].shape().Size() == inputs[0].shape().Size())
+      << "Input tensor size must be equal to the output tensor size";
   // If inputs are supposed to be in MKLDNN format and
   // MKLDNN support the data type or the shape. Then convert
   // it to the output format and shape
